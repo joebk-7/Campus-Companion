@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 sealed interface EventsUiState {
     data object Loading : EventsUiState
@@ -30,8 +32,12 @@ class EventsViewModel(private val repository: EventsRepository) : ViewModel() {
         viewModelScope.launch {
             _uiState.value = try {
                 EventsUiState.Content(repository.getEvents())
+            } catch (e: IOException) {
+                EventsUiState.Error("No internet connection. Check your network and try again.")
+            } catch (e: HttpException) {
+                EventsUiState.Error("Server error (${e.code()}). Please try again.")
             } catch (e: Exception) {
-                EventsUiState.Error(e.message ?: "Could not load events")
+                EventsUiState.Error("Something went wrong. Please try again.")
             }
         }
     }

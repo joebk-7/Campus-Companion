@@ -56,7 +56,13 @@ fun EventsScreen(
 
             is EventsUiState.Content -> {
                 if (state.events.isEmpty()) {
-                    Text("No events", modifier = Modifier.align(Alignment.Center))
+                    Text(
+                        text = "No campus events right now. Tap refresh to check again.",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(24.dp)
+                    )
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
